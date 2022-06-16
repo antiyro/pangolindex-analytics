@@ -12,6 +12,7 @@ import Link from '../Link'
 import { useSessionStart } from '../../contexts/Application'
 import { useDarkModeManager } from '../../contexts/LocalStorage'
 import Toggle from '../Toggle'
+import { setGlobalState, useGlobalState } from '../../state'
 
 const Wrapper = styled.div`
   height: ${({ isMobile }) => (isMobile ? 'initial' : '100vh')};
@@ -108,6 +109,11 @@ function SideNav({ history }) {
 
   const [isDark, toggleDarkMode] = useDarkModeManager()
 
+  const [defaultChain] = useGlobalState("defaultChain");
+  const handleChainChange = (e) => {
+    setGlobalState("defaultChain", e.target.value)
+  }
+
   return (
     <Wrapper isMobile={below1080}>
       {!below1080 ? (
@@ -143,7 +149,7 @@ function SideNav({ history }) {
                     }
                   >
                     <PieChart size={20} style={{ marginRight: '.75rem' }} />
-                    Pairs
+                    Pairs {defaultChain}
                   </Option>
                 </BasicLink>
 
@@ -159,6 +165,15 @@ function SideNav({ history }) {
                     Accounts
                   </Option>
                 </BasicLink>
+                <div>
+                  <label>
+                    SELECT A CHAIN
+                    <select onChange={handleChainChange}>
+                      <option value="avalanche">Avalanche</option>
+                      <option value="near">Near</option>
+                    </select>
+                  </label>
+                </div>
               </AutoColumn>
             )}
           </AutoColumn>

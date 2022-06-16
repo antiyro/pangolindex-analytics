@@ -12,7 +12,7 @@ export const client = new ApolloClient({
 
 export const nearClient = new ApolloClient({
   link: new HttpLink({
-    uri: 'https://api.thegraph.com/subgraphs/name/pangolindex/exchange',
+    uri: 'https://api.thegraph.com/subgraphs/id/QmQcJL6vrCntTFk2gNjt6ZXxgq9VB9tG9wxcJspLEMZskT',
   }),
   cache: new InMemoryCache(),
   shouldBatch: true,

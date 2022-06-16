@@ -4,6 +4,8 @@ import Vibrant from 'node-vibrant'
 import { hex } from 'wcag-contrast'
 import { isAddress } from '../utils'
 import copy from 'copy-to-clipboard'
+import { useGlobalState } from '../state'
+import { client, nearClient } from '../apollo/client'
 
 export function useColor(tokenAddress, token) {
   const [color, setColor] = useState('#2172E5')
@@ -95,4 +97,13 @@ export default function useInterval(callback: () => void, delay: null | number) 
     }
     return
   }, [delay])
+}
+
+export function GetClient() {
+  const [defaultChain] = useGlobalState("defaultChain");
+
+  if (defaultChain === 'avalanche')
+    return (client)
+  else
+    return (nearClient)
 }
