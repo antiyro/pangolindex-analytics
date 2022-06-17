@@ -99,7 +99,7 @@ export default function useInterval(callback: () => void, delay: null | number) 
   }, [delay])
 }
 
-export function GetClient() {
+export function UseGetClient() {
   const [defaultChain] = useGlobalState("defaultChain");
 
   if (defaultChain === 'avalanche')

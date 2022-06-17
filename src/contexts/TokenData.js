@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useMemo, useCallback, useEffect, useState } from 'react'
 
-import { client } from '../apollo/client'
+import { client, nearClient } from '../apollo/client'
 import {
   TOKEN_DATA,
   FILTERED_TRANSACTIONS,
@@ -32,7 +32,8 @@ import { timeframeOptions } from '../constants'
 import { useLatestBlocks } from './Application'
 import { updateNameData } from '../utils/data'
 import { COIN_ID_MAP } from '../constants/coingecko'
-import { GetClient } from '../hooks'
+import { UseGetClient } from '../hooks'
+import { getMetadata } from '../scripts/near/metadata'
 
 const UPDATE = 'UPDATE'
 const UPDATE_TOKEN_TXNS = 'UPDATE_TOKEN_TXNS'
@@ -294,7 +295,13 @@ const getTopTokens = async (ethPrice, ethPriceOld, cliento) => {
           oneDayHistory?.derivedETH ? oneDayHistory?.derivedETH * ethPriceOld : 0
         )
 
+        let metadata;
         // set data
+        if (cliento === nearClient) {
+          metadata = await getMetadata(current.data.tokens[0].id)
+          data.name = metadata.name
+          data.symbol = metadata.symbol
+        }
         data.priceUSD = data?.derivedETH * ethPrice
         data.totalLiquidityUSD = currentLiquidityUSD
         data.oneDayVolumeUSD = parseFloat(oneDayVolumeUSD)
@@ -610,7 +617,7 @@ export function Updater() {
   const [, { updateTopTokens }] = useTokenDataContext()
   const [ethPrice, ethPriceOld] = useEthPrice()
 
-  let cliento = GetClient()
+  let cliento = UseGetClient()
   useEffect(() => {
     async function getData() {
       // get top pairs for overview list

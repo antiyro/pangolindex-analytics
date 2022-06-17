@@ -12,7 +12,7 @@ import Link from '../Link'
 import { useSessionStart } from '../../contexts/Application'
 import { useDarkModeManager } from '../../contexts/LocalStorage'
 import Toggle from '../Toggle'
-import { setGlobalState, useGlobalState } from '../../state'
+import { setGlobalState } from '../../state'
 
 const Wrapper = styled.div`
   height: ${({ isMobile }) => (isMobile ? 'initial' : '100vh')};
@@ -108,8 +108,6 @@ function SideNav({ history }) {
   const seconds = useSessionStart()
 
   const [isDark, toggleDarkMode] = useDarkModeManager()
-
-  const [defaultChain] = useGlobalState("defaultChain");
   const handleChainChange = (e) => {
     setGlobalState("defaultChain", e.target.value)
   }
@@ -149,7 +147,7 @@ function SideNav({ history }) {
                     }
                   >
                     <PieChart size={20} style={{ marginRight: '.75rem' }} />
-                    Pairs {defaultChain}
+                    Pairs
                   </Option>
                 </BasicLink>
 
@@ -210,8 +208,9 @@ function SideNav({ history }) {
         <MobileWrapper>
           <Title />
         </MobileWrapper>
-      )}
-    </Wrapper>
+      )
+      }
+    </Wrapper >
   )
 }
 
