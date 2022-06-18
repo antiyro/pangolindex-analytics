@@ -797,7 +797,7 @@ const TokenFields = `
 export const TOKENS_CURRENT = gql`
   ${TokenFields}
   query tokens {
-    tokens(first: 1, orderBy: tradeVolumeUSD, orderDirection: desc, skip: 24) {
+    tokens(first: 3, orderBy: tradeVolumeUSD, orderDirection: desc, skip: 28) {
       ...TokenFields
     }
   }

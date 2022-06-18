@@ -222,8 +222,8 @@ function TokenPage({ address, history }) {
     oneDayVolumeUSD || oneDayVolumeUSD === 0
       ? formattedNum(oneDayVolumeUSD === 0 ? oneDayVolumeUT : oneDayVolumeUSD, true)
       : oneDayVolumeUSD === 0
-      ? '$0'
-      : '-'
+        ? '$0'
+        : '-'
 
   // mark if using untracked volume
   const [usingUtVolume, setUsingUtVolume] = useState(false)
@@ -253,18 +253,18 @@ function TokenPage({ address, history }) {
   const formattedFullyDilutedValuation = fullyDilutedValuation
     ? formattedNum(fullyDilutedValuation, true)
     : fullyDilutedValuation === 0
-    ? '$0'
-    : '-'
+      ? '$0'
+      : '-'
   const formattedTotalValueLockedUSD = totalValueLockedUSD
     ? formattedNum(totalValueLockedUSD, true)
     : totalValueLockedUSD === 0
-    ? '$0'
-    : '-'
+      ? '$0'
+      : '-'
   const formattedCirculatingSupply = circulatingSupply
     ? formattedNum(circulatingSupply, false)
     : circulatingSupply === 0
-    ? '0'
-    : '-'
+      ? '0'
+      : '-'
   const formattedTotalSupply = totalSupply ? formattedNum(totalSupply, false) : totalSupply === 0 ? '0' : '-'
   const formattedMaxSupply = maxSupply ? formattedNum(maxSupply, false) : maxSupply === 0 ? '0' : '-'
   const formattedAllTimeHigh = allTimeHigh ? formattedNum(allTimeHigh, true) : allTimeHigh === 0 ? '$0' : '-'
@@ -284,7 +284,7 @@ function TokenPage({ address, history }) {
   }, [])
 
   const addMetamask = async () => {
-    const image = `https://raw.githubusercontent.com/pangolindex/tokens/main/assets/${isAddress(address)}/logo.png`
+    const image = `https://raw.githubusercontent.com/antiyro/pangolindex-tokens/main/assets/${address}/logo.png`
     const provider = window.ethereum
     if (provider) {
       try {
