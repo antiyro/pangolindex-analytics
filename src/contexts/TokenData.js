@@ -34,6 +34,7 @@ import { updateNameData } from '../utils/data'
 import { COIN_ID_MAP } from '../constants/coingecko'
 import { UseGetClient } from '../hooks'
 import { getMetadata } from '../scripts/near/metadata'
+import { getVirtualPrice } from '../scripts/near/get_pool'
 
 const UPDATE = 'UPDATE'
 const UPDATE_TOKEN_TXNS = 'UPDATE_TOKEN_TXNS'
@@ -253,9 +254,10 @@ const getTopTokens = async (ethPrice, ethPriceOld, cliento) => {
       twoDayData &&
       current?.data?.tokens.map(async (token, tokenMetadata) => {
         let data = token
-        if (cliento === nearClient)
+        if (cliento === nearClient) {
           tokenMetadata = await getMetadata(token.id)
-        console.log(tokenMetadata)
+          // console.log(getVirtualPrice(token.id))
+        }
         // let liquidityDataThisToken = liquidityData?.[token.id]
         let oneDayHistory = oneDayData?.[token.id]
         let twoDayHistory = twoDayData?.[token.id]
@@ -299,7 +301,6 @@ const getTopTokens = async (ethPrice, ethPriceOld, cliento) => {
 
         // set data
         if (cliento === nearClient) {
-
           data.name = tokenMetadata.name
           data.symbol = tokenMetadata.symbol
         }

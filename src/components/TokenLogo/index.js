@@ -70,7 +70,7 @@ export default function TokenLogo({ address, header = false, size = '24px', ...r
     )
   }
 
-  const path = `https://raw.githubusercontent.com/antiyro/pangolindex-tokens/main/assets/${address}/logo.png`
+  const path = `https://raw.githubusercontent.com/antiyro/pangolindex-tokens/main/assets/${isAddress(address)}/logo.png`
 
   return (
     <Inline>

@@ -336,6 +336,9 @@ export const isAddress = (value) => {
   try {
     return ethers.utils.getAddress(value.toLowerCase())
   } catch {
+    let str = value.split('.');
+    if ((str.length === 2) && (str[0].match(/^[0-9A-Za-z]+$/)) && (str[1] === 'near'))
+      return true
     return false
   }
 }

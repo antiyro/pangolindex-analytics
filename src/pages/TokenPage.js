@@ -284,7 +284,7 @@ function TokenPage({ address, history }) {
   }, [])
 
   const addMetamask = async () => {
-    const image = `https://raw.githubusercontent.com/antiyro/pangolindex-tokens/main/assets/${address}/logo.png`
+    const image = `https://raw.githubusercontent.com/antiyro/pangolindex-tokens/main/assets/${isAddress(address)}/logo.png`
     const provider = window.ethereum
     if (provider) {
       try {

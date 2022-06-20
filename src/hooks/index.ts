@@ -9,8 +9,9 @@ import { client, nearClient } from '../apollo/client'
 
 export function useColor(tokenAddress, token) {
   const [color, setColor] = useState('#2172E5')
+  console.log(isAddress(tokenAddress))
   if (tokenAddress) {
-    const path = `https://raw.githubusercontent.com/antiyro/pangolindex-tokens/main/assets/${tokenAddress}/logo.png`
+    const path = `https://raw.githubusercontent.com/antiyro/pangolindex-tokens/main/assets/${isAddress(tokenAddress)}/logo.png`
     if (path) {
       Vibrant.from(path).getPalette((err, palette) => {
         if (palette && palette.Vibrant) {

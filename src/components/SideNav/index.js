@@ -13,6 +13,7 @@ import { useSessionStart } from '../../contexts/Application'
 import { useDarkModeManager } from '../../contexts/LocalStorage'
 import Toggle from '../Toggle'
 import { setGlobalState } from '../../state'
+import { Button } from '@pangolindex/components'
 
 const Wrapper = styled.div`
   height: ${({ isMobile }) => (isMobile ? 'initial' : '100vh')};
@@ -164,13 +165,13 @@ function SideNav({ history }) {
                   </Option>
                 </BasicLink>
                 <div>
-                  <label>
+                  <Button variant='primary'>
                     SELECT A CHAIN
                     <select onChange={handleChainChange}>
                       <option value="avalanche">Avalanche</option>
                       <option value="near">Near</option>
                     </select>
-                  </label>
+                  </Button>
                 </div>
               </AutoColumn>
             )}
