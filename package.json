@@ -2,6 +2,7 @@
   "name": "@pangolindex/analytics",
   "private": true,
   "homepage": "https://info.pangolin.exchange",
+  "type": "module",
   "devDependencies": {
     "@babel/preset-env": "7.8.7",
     "@pangolindex/token-lists": "^1.0.1",
@@ -101,7 +102,10 @@
     "fast-csv": "^4.3.6",
     "helmet": "^4.4.1",
     "moment": "^2.29.1",
+    "near-api-js": "^0.45.1",
+    "os": "^0.1.2",
     "path": "^0.12.7",
+    "react-hooks-global-state": "^2.0.0-rc.0",
     "react-html-parser": "^2.0.2"
   }
 }

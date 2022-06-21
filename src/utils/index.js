@@ -48,8 +48,7 @@ export function getPoolLink(token0Address, token1Address = null, remove = false)
     return (
       `https://app.pangolin.exchange/#/` +
       (remove ? `remove` : `add`) +
-      `/${token0Address === WAVAX_ADDRESS ? 'AVAX' : token0Address}/${
-        token1Address === WAVAX_ADDRESS ? 'AVAX' : token1Address
+      `/${token0Address === WAVAX_ADDRESS ? 'AVAX' : token0Address}/${token1Address === WAVAX_ADDRESS ? 'AVAX' : token1Address
       }`
     )
   }
@@ -59,9 +58,8 @@ export function getSwapLink(token0Address, token1Address = null) {
   if (!token1Address) {
     return `https://app.pangolin.exchange/#/swap?inputCurrency=${token0Address}`
   } else {
-    return `https://app.pangolin.exchange/#/swap?inputCurrency=${
-      token0Address === WAVAX_ADDRESS ? 'AVAX' : token0Address
-    }&outputCurrency=${token1Address === WAVAX_ADDRESS ? 'AVAX' : token1Address}`
+    return `https://app.pangolin.exchange/#/swap?inputCurrency=${token0Address === WAVAX_ADDRESS ? 'AVAX' : token0Address
+      }&outputCurrency=${token1Address === WAVAX_ADDRESS ? 'AVAX' : token1Address}`
   }
 }
 
@@ -338,6 +336,9 @@ export const isAddress = (value) => {
   try {
     return ethers.utils.getAddress(value.toLowerCase())
   } catch {
+    let str = value.split('.');
+    if ((str.length === 2) && (str[0].match(/^[0-9A-Za-z]+$/)) && (str[1] === 'near'))
+      return true
     return false
   }
 }

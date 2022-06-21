@@ -4,13 +4,14 @@ import Vibrant from 'node-vibrant'
 import { hex } from 'wcag-contrast'
 import { isAddress } from '../utils'
 import copy from 'copy-to-clipboard'
+import { useGlobalState } from '../state'
+import { client, nearClient } from '../apollo/client'
 
 export function useColor(tokenAddress, token) {
   const [color, setColor] = useState('#2172E5')
+  console.log(isAddress(tokenAddress))
   if (tokenAddress) {
-    const path = `https://raw.githubusercontent.com/pangolindex/tokens/main/assets/${isAddress(
-      tokenAddress
-    )}/logo.png`
+    const path = `https://raw.githubusercontent.com/antiyro/pangolindex-tokens/main/assets/${isAddress(tokenAddress)}/logo.png`
     if (path) {
       Vibrant.from(path).getPalette((err, palette) => {
         if (palette && palette.Vibrant) {
@@ -97,9 +98,11 @@ export default function useInterval(callback: () => void, delay: null | number) 
   }, [delay])
 }
 
-export function useGetClient(chains) {
-  if (chains.id === '1')
-    return ('Avalanche')
+export function UseGetClient() {
+  const [defaultChain] = useGlobalState("defaultChain");
+
+  if (defaultChain === 'avalanche')
+    return (client)
   else
-    return ('Near')
+    return (nearClient)
 }

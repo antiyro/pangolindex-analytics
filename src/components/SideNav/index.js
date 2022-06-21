@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { AutoColumn } from '../Column'
 import Title from '../Title'
@@ -12,9 +12,8 @@ import Link from '../Link'
 import { useSessionStart } from '../../contexts/Application'
 import { useDarkModeManager } from '../../contexts/LocalStorage'
 import Toggle from '../Toggle'
-import ChainMenu from '../ChainMenu'
-import ChainContext, { chains } from '../ChainMenu/chain-context'
-import { useGetClient } from '../../hooks'
+import { setGlobalState } from '../../state'
+import { ButtonLight } from '../ButtonStyled'
 
 const Wrapper = styled.div`
   height: ${({ isMobile }) => (isMobile ? 'initial' : '100vh')};
@@ -101,8 +100,29 @@ const PollingDot = styled.div`
   border-radius: 50%;
   background-color: ${({ theme }) => theme.green1};
 `
+const DropDown = styled.div`
+  padding: 10px;
+  background-color: ${({ theme }) => theme.bg2};
+  border-radius: 10px;
+`
+const ChainOption = styled.div`
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+  :active {
+    background-color: grey;
+    border-radius: 10px;
+  }
+  :hover {
+    background-color: grey;
+    border-radius: 10px;
+  }
+  
+`
 
 function SideNav({ history }) {
+  const [open, setOpen] = useState(false)
+
   const below1080 = useMedia('(max-width: 1080px)')
 
   const below1180 = useMedia('(max-width: 1180px)')
@@ -110,11 +130,15 @@ function SideNav({ history }) {
   const seconds = useSessionStart()
 
   const [isDark, toggleDarkMode] = useDarkModeManager()
+  const [chain, setChain] = useState('avalanche')
+  // const handleChainChange = (e) => {
+  //   setGlobalState("defaultChain", e.target.value)
+  // }
+  useEffect(() => {
+    setGlobalState("defaultChain", chain)
+  }, [chain]);
 
-  const [chain, setChain] = useState(chains.avalanche);
-  const toggleChain = () => chain === chains.avalanche ? setChain(chains.near) : setChain(chains.avalanche)
-
-  const test = useGetClient(chain)
+  const backgroundColor = '#FAAB14'
 
   return (
     <Wrapper isMobile={below1080}>
@@ -139,7 +163,7 @@ function SideNav({ history }) {
                     }
                   >
                     <Disc size={20} style={{ marginRight: '.75rem' }} />
-                    {test} Tokens
+                    Tokens
                   </Option>
                 </BasicLink>
                 <BasicLink to="/pairs">
@@ -151,7 +175,7 @@ function SideNav({ history }) {
                     }
                   >
                     <PieChart size={20} style={{ marginRight: '.75rem' }} />
-                    {test} Pairs
+                    Pairs
                   </Option>
                 </BasicLink>
 
@@ -164,13 +188,18 @@ function SideNav({ history }) {
                     }
                   >
                     <List size={20} style={{ marginRight: '.75rem' }} />
-                    {test} Accounts
+                    Accounts
                   </Option>
                 </BasicLink>
-                <ChainContext.Provider value={chain}>
-                  <button onClick={toggleChain}>Change chain</button>
-                  <ChainMenu />
-                </ChainContext.Provider>
+                <div>
+                  <ButtonLight color={backgroundColor} onClick={() => setOpen(!open)}>Select chain</ButtonLight>
+                  {open &&
+                    <DropDown onClick={() => setOpen(!open)}>
+                      <ChainOption value="avalanche" onClick={() => setChain('avalanche')}>Avalanche</ChainOption>
+                      <ChainOption value="near" onClick={() => setChain('near')}>Near</ChainOption>
+                    </DropDown>
+                  }
+                </div>
               </AutoColumn>
             )}
           </AutoColumn>
@@ -207,8 +236,9 @@ function SideNav({ history }) {
         <MobileWrapper>
           <Title />
         </MobileWrapper>
-      )}
-    </Wrapper>
+      )
+      }
+    </Wrapper >
   )
 }
 

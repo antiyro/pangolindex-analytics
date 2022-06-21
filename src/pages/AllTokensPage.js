@@ -9,6 +9,7 @@ import { PageWrapper, FullWrapper } from '../components'
 import { RowBetween } from '../components/Row'
 import Search from '../components/Search'
 import { useMedia } from 'react-use'
+import Loader from '../components/LocalLoader'
 
 function AllTokensPage() {
   const allTokens = useAllTokenData()
@@ -27,7 +28,7 @@ function AllTokensPage() {
           {!below600 && <Search small={true} />}
         </RowBetween>
         <Panel style={{ marginTop: '6px', padding: below600 && '1rem 0 0 0 ' }}>
-          <TopTokenList tokens={allTokens} itemMax={50} />
+          {allTokens ? <TopTokenList tokens={allTokens} itemMax={50} /> : <Loader />}
         </Panel>
       </FullWrapper>
     </PageWrapper>
