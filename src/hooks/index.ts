@@ -96,3 +96,10 @@ export default function useInterval(callback: () => void, delay: null | number) 
     return
   }, [delay])
 }
+
+export function useGetClient(chains) {
+  if (chains.id === '1')
+    return ('Avalanche')
+  else
+    return ('Near')
+}

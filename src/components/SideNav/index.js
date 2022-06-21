@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { AutoColumn } from '../Column'
 import Title from '../Title'
@@ -12,6 +12,9 @@ import Link from '../Link'
 import { useSessionStart } from '../../contexts/Application'
 import { useDarkModeManager } from '../../contexts/LocalStorage'
 import Toggle from '../Toggle'
+import ChainMenu from '../ChainMenu'
+import ChainContext, { chains } from '../ChainMenu/chain-context'
+import { useGetClient } from '../../hooks'
 
 const Wrapper = styled.div`
   height: ${({ isMobile }) => (isMobile ? 'initial' : '100vh')};
@@ -108,6 +111,11 @@ function SideNav({ history }) {
 
   const [isDark, toggleDarkMode] = useDarkModeManager()
 
+  const [chain, setChain] = useState(chains.avalanche);
+  const toggleChain = () => chain === chains.avalanche ? setChain(chains.near) : setChain(chains.avalanche)
+
+  const test = useGetClient(chain)
+
   return (
     <Wrapper isMobile={below1080}>
       {!below1080 ? (
@@ -131,7 +139,7 @@ function SideNav({ history }) {
                     }
                   >
                     <Disc size={20} style={{ marginRight: '.75rem' }} />
-                    Tokens
+                    {test} Tokens
                   </Option>
                 </BasicLink>
                 <BasicLink to="/pairs">
@@ -143,7 +151,7 @@ function SideNav({ history }) {
                     }
                   >
                     <PieChart size={20} style={{ marginRight: '.75rem' }} />
-                    Pairs
+                    {test} Pairs
                   </Option>
                 </BasicLink>
 
@@ -156,9 +164,13 @@ function SideNav({ history }) {
                     }
                   >
                     <List size={20} style={{ marginRight: '.75rem' }} />
-                    Accounts
+                    {test} Accounts
                   </Option>
                 </BasicLink>
+                <ChainContext.Provider value={chain}>
+                  <button onClick={toggleChain}>Change chain</button>
+                  <ChainMenu />
+                </ChainContext.Provider>
               </AutoColumn>
             )}
           </AutoColumn>
