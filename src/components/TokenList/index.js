@@ -16,6 +16,7 @@ import { OVERVIEW_TOKEN_BLACKLIST } from '../../constants'
 import FormattedName from '../FormattedName'
 import { TYPE } from '../../Theme'
 import LocalLoader from '../LocalLoader'
+import { UseGetClient } from '../../hooks'
 
 dayjs.extend(utc)
 
@@ -178,12 +179,13 @@ function TopTokenList({ tokens, itemMax = 10 }) {
   }, [formattedTokens, itemMax, page, sortDirection, sortedColumn])
 
   const ListItem = ({ item, index }) => {
+    const cliento = UseGetClient()
     return (
       <DashGrid style={{ height: '48px' }} focus={true}>
         <DataText area="name" fontWeight="500">
           <Row>
             {!below680 && <div style={{ marginRight: '1rem', width: '10px' }}>{index}</div>}
-            <TokenLogo address={item.id} />
+            <TokenLogo address={item.id} client={cliento} />
             <CustomLink style={{ marginLeft: '16px', whiteSpace: 'nowrap' }} to={'/token/' + item.id}>
               <FormattedName
                 text={below680 ? item.symbol : item.name}

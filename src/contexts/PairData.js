@@ -233,8 +233,6 @@ async function getBulkPairData(pairList, ethPrice, cliento) {
     let pairData = await Promise.all(
       current &&
       current.data.pairs.map(async (pair) => {
-
-    console.log(pair)
         let data = pair
         let oneDayHistory = oneDayData?.[pair.id]
         if (!oneDayHistory) {

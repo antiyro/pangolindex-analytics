@@ -252,10 +252,8 @@ const getTopTokens = async (ethPrice, ethPriceOld, cliento) => {
       twoDayData &&
       current?.data?.tokens.map(async (token, tokenMetadata) => {
         let data = token
-        if (cliento === nearClient) {
+        if (cliento === nearClient)
           tokenMetadata = await getMetadata(token.id)
-          // console.log(getVirtualPrice(token.id))
-        }
         // let liquidityDataThisToken = liquidityData?.[token.id]
         let oneDayHistory = oneDayData?.[token.id]
         let twoDayHistory = twoDayData?.[token.id]

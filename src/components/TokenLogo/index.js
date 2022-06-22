@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { isAddress } from '../../utils/index.js'
+import { isAddress, isNearAddress } from '../../utils/index.js'
 import PlaceHolder from '../../assets/placeholder.png'
 import EthereumLogo from '../../assets/eth.png'
+import { nearClient } from '../../apollo/client.js'
+import { getMetadata } from '../../scripts/near/metadata.js'
 
 const BAD_IMAGES = {}
 
@@ -31,7 +33,14 @@ const StyledEthereumLogo = styled.div`
   }
 `
 
-export default function TokenLogo({ address, header = false, size = '24px', ...rest }) {
+async function getMeta(address) {
+  let metadata = await getMetadata(address).then(function(value) {
+    return value
+  });
+  return metadata.icon
+}
+
+export default function TokenLogo({ address, client, header = false, size = '24px', ...rest }) {
   const [error, setError] = useState(false)
 
   useEffect(() => {
@@ -69,8 +78,14 @@ export default function TokenLogo({ address, header = false, size = '24px', ...r
       </StyledEthereumLogo>
     )
   }
-
-  const path = `https://raw.githubusercontent.com/antiyro/pangolindex-tokens/main/assets/${isAddress(address)}/logo.png`
+  
+  let path = 0;
+  if (client === nearClient && isNearAddress(address)) {
+    path = getMeta(address)
+    console.log(path)
+  }
+  else
+    path = `https://raw.githubusercontent.com/antiyro/pangolindex-tokens/main/assets/${isAddress(address)}/logo.png`
 
   return (
     <Inline>
