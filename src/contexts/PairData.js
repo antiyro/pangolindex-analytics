@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useMemo, useCallback, useEffect, useState } from 'react'
 
-import { client } from '../apollo/client'
+import { client, nearClient } from '../apollo/client'
 import {
   PAIR_DATA,
   PAIR_CHART,
@@ -30,6 +30,7 @@ import { timeframeOptions } from '../constants'
 import { useLatestBlocks } from './Application'
 import { updateNameData } from '../utils/data'
 import { UseGetClient } from '../hooks'
+import { getMetadata } from '../scripts/near/metadata'
 
 const UPDATE = 'UPDATE'
 const UPDATE_PAIR_TXNS = 'UPDATE_PAIR_TXNS'
@@ -232,6 +233,8 @@ async function getBulkPairData(pairList, ethPrice, cliento) {
     let pairData = await Promise.all(
       current &&
       current.data.pairs.map(async (pair) => {
+
+    console.log(pair)
         let data = pair
         let oneDayHistory = oneDayData?.[pair.id]
         if (!oneDayHistory) {
@@ -257,7 +260,7 @@ async function getBulkPairData(pairList, ethPrice, cliento) {
           })
           oneWeekHistory = newData.data.pairs[0]
         }
-        data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory, ethPrice, b1)
+        data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory, ethPrice, b1, cliento)
         return data
       })
     )
@@ -267,7 +270,7 @@ async function getBulkPairData(pairList, ethPrice, cliento) {
   }
 }
 
-function parseData(data, oneDayData, twoDayData, oneWeekData, ethPrice, oneDayBlock) {
+async function parseData(data, oneDayData, twoDayData, oneWeekData, ethPrice, oneDayBlock, cliento) {
   // get volume changes
   const [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
     data?.volumeUSD,
@@ -303,8 +306,16 @@ function parseData(data, oneDayData, twoDayData, oneWeekData, ethPrice, oneDayBl
     data.oneWeekVolumeUSD = parseFloat(data.volumeUSD)
   }
 
-  // format incorrect names
-  updateNameData(data)
+  if (cliento === nearClient) {
+    let token0Metadata = await getMetadata(data.token0.id)
+    let token1Metadata = await getMetadata(data.token1.id)
+    data.token0.name = token0Metadata.name
+    data.token0.symbol = token0Metadata.symbol
+    data.token1.symbol = token1Metadata.symbol
+    data.token1.name = token1Metadata.name
+  }
+  else
+    updateNameData(data)
 
   return data
 }
@@ -494,7 +505,7 @@ export function Updater() {
       topPairs && updateTopPairs(topPairs)
     }
     ethPrice && getData()
-  }, [ethPrice, updateTopPairs])
+  }, [ethPrice, updateTopPairs, cliento])
   return null
 }
 
