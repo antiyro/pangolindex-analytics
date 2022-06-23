@@ -703,7 +703,7 @@ const PairFields = `
 
 export const PAIRS_CURRENT = gql`
   query pairs {
-    pairs(first: 200, orderBy: trackedReserveETH, orderDirection: desc) {
+    pairs(first: 2, orderBy: trackedReserveETH, orderDirection: desc) {
       id
     }
   }
@@ -807,7 +807,7 @@ const TokenFields = `
 export const TOKENS_CURRENT = gql`
   ${TokenFields}
   query tokens {
-    tokens(first: 3, orderBy: tradeVolumeUSD, orderDirection: desc, skip: 31) {
+    tokens(first: 10, orderBy: tradeVolumeUSD, orderDirection: desc) {
       ...TokenFields
     }
   }

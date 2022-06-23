@@ -12,7 +12,7 @@ export const client = new ApolloClient({
 
 export const nearClient = new ApolloClient({
   link: new HttpLink({
-    uri: 'https://api.thegraph.com/subgraphs/id/QmQcJL6vrCntTFk2gNjt6ZXxgq9VB9tG9wxcJspLEMZskT',
+    uri: 'https://api.thegraph.com/subgraphs/id/QmaBw2btKdvviq5FV4B8bBR8whaBvhbhm6D1eXxKk3PNUQ',
   }),
   cache: new InMemoryCache(),
   shouldBatch: true,

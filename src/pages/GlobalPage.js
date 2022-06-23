@@ -11,7 +11,7 @@ import TxnList from '../components/TxnList'
 import GlobalChart from '../components/GlobalChart'
 import Search from '../components/Search'
 import GlobalStats from '../components/GlobalStats'
-
+import axios from 'axios'
 import { useGlobalData, useGlobalTransactions } from '../contexts/GlobalData'
 import { useAllPairData } from '../contexts/PairData'
 import { useMedia } from 'react-use'
@@ -63,6 +63,10 @@ function GlobalPage() {
     })
   }, [])
 
+  async function getNearPrice() {
+    return await axios.get(`https://api.stats.ref.finance/api/price-data?tokenId=wrap.near`)
+  }
+
   return (
     <PageWrapper>
       <ThemedBackground backgroundColor={transparentize(0.7, '#FF6b00')} />
@@ -71,7 +75,7 @@ function GlobalPage() {
           <AutoColumn gap="24px" style={{ paddingBottom: below800 ? '0' : '24px' }}>
             <TYPE.largeHeader>{below800 ? 'Protocol Analytics' : 'Pangolin Protocol Analytics'}</TYPE.largeHeader>
             <Search />
-            <GlobalStats />
+            <GlobalStats nearPrice={getNearPrice()} />
           </AutoColumn>
           {below800 && ( // mobile card
             <Box mb={20}>

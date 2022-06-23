@@ -343,6 +343,16 @@ export const isAddress = (value) => {
   }
 }
 
+export const isNearAddress = (value) => {
+  try {
+    let str = value.split('.');
+    if ((str.length > 1))
+      return true
+  } catch {
+    return false
+  }
+}
+
 export const toK = (num) => {
   return Numeral(num).format('0.[00]a')
 }

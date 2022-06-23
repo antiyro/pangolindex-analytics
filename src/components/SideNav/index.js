@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { AutoColumn } from '../Column'
 import Title from '../Title'
@@ -13,7 +13,7 @@ import { useSessionStart } from '../../contexts/Application'
 import { useDarkModeManager } from '../../contexts/LocalStorage'
 import Toggle from '../Toggle'
 import { setGlobalState } from '../../state'
-import { Button } from '@pangolindex/components'
+import { ButtonLight } from '../ButtonStyled'
 
 const Wrapper = styled.div`
   height: ${({ isMobile }) => (isMobile ? 'initial' : '100vh')};
@@ -100,8 +100,29 @@ const PollingDot = styled.div`
   border-radius: 50%;
   background-color: ${({ theme }) => theme.green1};
 `
+const DropDown = styled.div`
+  padding: 10px;
+  background-color: ${({ theme }) => theme.bg2};
+  border-radius: 10px;
+`
+const ChainOption = styled.div`
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+  :active {
+    background-color: grey;
+    border-radius: 10px;
+  }
+  :hover {
+    background-color: grey;
+    border-radius: 10px;
+  }
+  
+`
 
 function SideNav({ history }) {
+  const [open, setOpen] = useState(false)
+
   const below1080 = useMedia('(max-width: 1080px)')
 
   const below1180 = useMedia('(max-width: 1180px)')
@@ -109,9 +130,15 @@ function SideNav({ history }) {
   const seconds = useSessionStart()
 
   const [isDark, toggleDarkMode] = useDarkModeManager()
-  const handleChainChange = (e) => {
-    setGlobalState("defaultChain", e.target.value)
-  }
+  const [chain, setChain] = useState('avalanche')
+  // const handleChainChange = (e) => {
+  //   setGlobalState("defaultChain", e.target.value)
+  // }
+  useEffect(() => {
+    setGlobalState("defaultChain", chain)
+  }, [chain]);
+
+  const backgroundColor = '#FAAB14'
 
   return (
     <Wrapper isMobile={below1080}>
@@ -165,13 +192,13 @@ function SideNav({ history }) {
                   </Option>
                 </BasicLink>
                 <div>
-                  <Button variant='primary'>
-                    SELECT A CHAIN
-                    <select onChange={handleChainChange}>
-                      <option value="avalanche">Avalanche</option>
-                      <option value="near">Near</option>
-                    </select>
-                  </Button>
+                  <ButtonLight color={backgroundColor} onClick={() => setOpen(!open)}>Select chain</ButtonLight>
+                  {open &&
+                    <DropDown onClick={() => setOpen(!open)}>
+                      <ChainOption value="avalanche" onClick={() => setChain('avalanche')}>Avalanche</ChainOption>
+                      <ChainOption value="near" onClick={() => setChain('near')}>Near</ChainOption>
+                    </DropDown>
+                  }
                 </div>
               </AutoColumn>
             )}

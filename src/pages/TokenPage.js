@@ -34,7 +34,7 @@ import FormattedName from '../components/FormattedName'
 import { useListedTokens } from '../contexts/Application'
 import METAMASK_IMAGE from '../assets/MetaMask.png'
 import { AEB_TOKEN_ADDRESSES } from '../constants'
-import { getTokenLogo } from '../utils'
+import { isAddress } from '../utils'
 
 const DashboardWrapper = styled.div`
   width: 100%;

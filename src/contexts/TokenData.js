@@ -10,7 +10,7 @@ import {
   PRICES_BY_BLOCK,
   TOKEN_PAIRS_DATA,
 } from '../apollo/queries'
-
+import axios from 'axios';
 import { useEthPrice } from './GlobalData'
 
 import dayjs from 'dayjs'
@@ -34,7 +34,6 @@ import { updateNameData } from '../utils/data'
 import { COIN_ID_MAP } from '../constants/coingecko'
 import { UseGetClient } from '../hooks'
 import { getMetadata } from '../scripts/near/metadata'
-import { getVirtualPrice } from '../scripts/near/get_pool'
 
 const UPDATE = 'UPDATE'
 const UPDATE_TOKEN_TXNS = 'UPDATE_TOKEN_TXNS'
@@ -74,7 +73,6 @@ function reducer(state, { type, payload }) {
           return (added[token.id] = token)
         })
       return {
-        ...state,
         ...added,
       }
     }
@@ -252,11 +250,12 @@ const getTopTokens = async (ethPrice, ethPriceOld, cliento) => {
       current &&
       oneDayData &&
       twoDayData &&
-      current?.data?.tokens.map(async (token, tokenMetadata) => {
+      current?.data?.tokens.map(async (token, tokenMetadata, tokenPrice, todayPrice) => {
         let data = token
         if (cliento === nearClient) {
           tokenMetadata = await getMetadata(token.id)
-          // console.log(getVirtualPrice(token.id))
+          tokenPrice = await axios.get(`https://api.stats.ref.finance/api/price-data?tokenId=${token.id}`);
+          todayPrice = Object.keys(tokenPrice.data).length;
         }
         // let liquidityDataThisToken = liquidityData?.[token.id]
         let oneDayHistory = oneDayData?.[token.id]
@@ -303,8 +302,10 @@ const getTopTokens = async (ethPrice, ethPriceOld, cliento) => {
         if (cliento === nearClient) {
           data.name = tokenMetadata.name
           data.symbol = tokenMetadata.symbol
+          data.priceUSD = tokenPrice.data[todayPrice - 1].price
         }
-        data.priceUSD = data?.derivedETH * ethPrice
+        else
+          data.priceUSD = data?.derivedETH * ethPrice
         data.totalLiquidityUSD = currentLiquidityUSD
         data.oneDayVolumeUSD = parseFloat(oneDayVolumeUSD)
         data.volumeChangeUSD = volumeChangeUSD
@@ -619,11 +620,11 @@ export function Updater() {
   const [, { updateTopTokens }] = useTokenDataContext()
   const [ethPrice, ethPriceOld] = useEthPrice()
 
-  let cliento = UseGetClient()
+  const cliento = UseGetClient()
   useEffect(() => {
     async function getData() {
       // get top pairs for overview list
-      let topTokens = await getTopTokens(ethPrice, ethPriceOld, cliento)
+      const topTokens = await getTopTokens(ethPrice, ethPriceOld, cliento)
       topTokens && updateTopTokens(topTokens)
     }
     ethPrice && ethPriceOld && getData()

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useMemo, useCallback, useEffect, useState } from 'react'
 
-import { client } from '../apollo/client'
+import { client, nearClient } from '../apollo/client'
 import {
   PAIR_DATA,
   PAIR_CHART,
@@ -29,6 +29,8 @@ import {
 import { timeframeOptions } from '../constants'
 import { useLatestBlocks } from './Application'
 import { updateNameData } from '../utils/data'
+import { UseGetClient } from '../hooks'
+import { getMetadata } from '../scripts/near/metadata'
 
 const UPDATE = 'UPDATE'
 const UPDATE_PAIR_TXNS = 'UPDATE_PAIR_TXNS'
@@ -73,7 +75,6 @@ function reducer(state, { type, payload }) {
         return (added[pair.id] = pair)
       })
       return {
-        ...state,
         ...added,
       }
     }
@@ -184,7 +185,7 @@ export default function Provider({ children }) {
   )
 }
 
-async function getBulkPairData(pairList, ethPrice) {
+async function getBulkPairData(pairList, ethPrice, cliento) {
   const [t1, t2, tWeek] = getTimestampsForChanges()
   let blocks = await getBlocksFromTimestamps([t1, t2, tWeek])
   let b1, b2, bWeek
@@ -199,7 +200,7 @@ async function getBulkPairData(pairList, ethPrice) {
   }
 
   try {
-    let current = await client.query({
+    let current = await cliento.query({
       query: PAIRS_BULK,
       variables: {
         allPairs: pairList,
@@ -209,7 +210,7 @@ async function getBulkPairData(pairList, ethPrice) {
 
     let [oneDayResult, twoDayResult, oneWeekResult] = await Promise.all(
       [b1, b2, bWeek].map(async (block) => {
-        let result = client.query({
+        let result = cliento.query({
           query: PAIRS_HISTORICAL_BULK(block, pairList),
           fetchPolicy: 'cache-first',
         })
@@ -235,7 +236,7 @@ async function getBulkPairData(pairList, ethPrice) {
         let data = pair
         let oneDayHistory = oneDayData?.[pair.id]
         if (!oneDayHistory) {
-          let newData = await client.query({
+          let newData = await cliento.query({
             query: PAIR_DATA(pair.id, b1),
             fetchPolicy: 'cache-first',
           })
@@ -243,7 +244,7 @@ async function getBulkPairData(pairList, ethPrice) {
         }
         let twoDayHistory = twoDayData?.[pair.id]
         if (!twoDayHistory) {
-          let newData = await client.query({
+          let newData = await cliento.query({
             query: PAIR_DATA(pair.id, b2),
             fetchPolicy: 'cache-first',
           })
@@ -251,13 +252,13 @@ async function getBulkPairData(pairList, ethPrice) {
         }
         let oneWeekHistory = oneWeekData?.[pair.id]
         if (!oneWeekHistory) {
-          let newData = await client.query({
+          let newData = await cliento.query({
             query: PAIR_DATA(pair.id, bWeek),
             fetchPolicy: 'cache-first',
           })
           oneWeekHistory = newData.data.pairs[0]
         }
-        data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory, ethPrice, b1)
+        data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory, ethPrice, b1, cliento)
         return data
       })
     )
@@ -267,7 +268,7 @@ async function getBulkPairData(pairList, ethPrice) {
   }
 }
 
-function parseData(data, oneDayData, twoDayData, oneWeekData, ethPrice, oneDayBlock) {
+async function parseData(data, oneDayData, twoDayData, oneWeekData, ethPrice, oneDayBlock, cliento) {
   // get volume changes
   const [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
     data?.volumeUSD,
@@ -303,8 +304,16 @@ function parseData(data, oneDayData, twoDayData, oneWeekData, ethPrice, oneDayBl
     data.oneWeekVolumeUSD = parseFloat(data.volumeUSD)
   }
 
-  // format incorrect names
-  updateNameData(data)
+  if (cliento === nearClient) {
+    let token0Metadata = await getMetadata(data.token0.id)
+    let token1Metadata = await getMetadata(data.token1.id)
+    data.token0.name = token0Metadata.name
+    data.token0.symbol = token0Metadata.symbol
+    data.token1.symbol = token1Metadata.symbol
+    data.token1.name = token1Metadata.name
+  }
+  else
+    updateNameData(data)
 
   return data
 }
@@ -472,27 +481,29 @@ export const getHourlyRateData = async (
 export function Updater() {
   const [, { updateTopPairs }] = usePairDataContext()
   const [ethPrice] = useEthPrice()
+  let cliento = UseGetClient()
+
   useEffect(() => {
     async function getData() {
       // get top pairs by reserves
       let {
         data: { pairs },
-      } = await client.query({
+      } = await cliento.query({
         query: PAIRS_CURRENT,
         fetchPolicy: 'cache-first',
       })
-
+      
       // format as array of addresses
       const formattedPairs = pairs.map((pair) => {
         return pair.id
       })
 
       // get data for every pair in list
-      let topPairs = await getBulkPairData(formattedPairs, ethPrice)
+      let topPairs = await getBulkPairData(formattedPairs, ethPrice, cliento)
       topPairs && updateTopPairs(topPairs)
     }
     ethPrice && getData()
-  }, [ethPrice, updateTopPairs])
+  }, [ethPrice, updateTopPairs, cliento])
   return null
 }
 
