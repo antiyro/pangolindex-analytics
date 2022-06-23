@@ -564,3 +564,7 @@ export const convertIntervalToSeconds = (resolution) => {
 
   return seconds
 }
+
+export const getTokenLogo = (address, size = 24) => {
+  return `https://raw.githubusercontent.com/pangolindex/tokens/main/assets/${isAddress(address)}/logo_${size}.png`
+}
