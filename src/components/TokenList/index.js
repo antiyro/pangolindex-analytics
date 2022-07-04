@@ -180,6 +180,7 @@ function TopTokenList({ tokens, itemMax = 10 }) {
 
   const ListItem = ({ item, index }) => {
     const cliento = UseGetClient()
+
     return (
       <DashGrid style={{ height: '48px' }} focus={true}>
         <DataText area="name" fontWeight="500">

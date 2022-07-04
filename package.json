@@ -107,6 +107,7 @@
     "os": "^0.1.2",
     "path": "^0.12.7",
     "react-hooks-global-state": "^2.0.0-rc.0",
-    "react-html-parser": "^2.0.2"
+    "react-html-parser": "^2.0.2",
+    "react-promise": "^3.0.2"
   }
 }
